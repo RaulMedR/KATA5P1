@@ -12,8 +12,9 @@ public class Kata5P1 {
         Connection conn;
         conn = connect();
         selectAll(conn);
+        createNewTable(conn);
+        
         close(conn);
-        // TODO code application logic here
     }
 
     private static Connection connect() {
@@ -42,8 +43,7 @@ public class Kata5P1 {
     private static void selectAll(Connection conn) {
         String sql = "SELECT * FROM PEOPLE";
         
-        try (Connection conn2 = Kata5P1.connect();
-             Statement stmt = conn2.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)){
             while(rs.next()){
                 System.out.println(rs.getInt("Id") + "\t" + 
@@ -52,6 +52,18 @@ public class Kata5P1 {
                                    rs.getString("Departamento") + "\t");
             }
             
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void createNewTable(Connection conn) {
+        String sql = "CREATE TABLE IF NOT EXISTS EMAIL (\n"
+                + " Id integer PRIMARY KEY AUTOINCREMENT, \n" 
+                + " Mail text NOT NULL);";
+        try(Statement stmt = conn.createStatement()){
+            stmt.execute(sql);
+            System.out.println("Tabla creada");
         } catch (SQLException e){
             System.out.println(e.getMessage());
         }
